@@ -2,6 +2,8 @@ import mimetypes
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 from urllib.parse import unquote_plus, parse_qs
+from socket_server import  run_client
+import  socket
 
 template_path = 'templates/'
 
@@ -43,13 +45,14 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
         query_data = unquote_plus(inputs.decode())
         print(f'{parse_qs(query_data)}=')
         data = parse_qs(query_data)
+        res = run_client('127.0.0.1', 5000, data)
         self.send_response(302)
         self.send_header('Location', '/')
         self.end_headers()
 
 
 def run():
-    http = HTTPServer(('0.0.0.0', 3000), CustomHTTPRequestHandler)
+    http = HTTPServer(('127.0.0.1', 3000), CustomHTTPRequestHandler)
     try:
         http.serve_forever()
     except KeyboardInterrupt:
